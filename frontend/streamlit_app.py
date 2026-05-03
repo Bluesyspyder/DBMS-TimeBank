@@ -22,155 +22,166 @@ st.set_page_config(
     page_title="TimeBank - Community Skill Exchange",
     page_icon="⏰",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # ============================================================
-# CUSTOM CSS (Dark Theme Vibe)
+# CUSTOM CSS (Better Stack Theme)
 # ============================================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
 
-    /* Global App Background - Deep Navy/Teal (Fish Hunters Vibe) */
+    /* Global App Background - Dark Deep Radial Gradient */
     .stApp {
-        background: linear-gradient(135deg, #0b131a 0%, #16222f 100%);
+        background: radial-gradient(circle at top, #1e1e2d 0%, #0d0d14 100%);
         color: #e2e8f0;
         font-family: 'Inter', sans-serif;
+    }
+    
+    /* Hide Streamlit default header/sidebar chrome */
+    .stApp > header,
+    header[data-testid="stHeader"],
+    [data-testid="stSidebar"],
+    [data-testid="collapsedControl"] {
+        display: none !important;
+    }
+
+    /* Add top padding to main content so it doesn't hide behind the fixed navbar */
+    .stApp .block-container {
+        padding-top: 6rem !important;
+    }
+
+    /* ── FIXED TOP NAVBAR ──────────────────────────────────────────── */
+    [data-testid="stRadio"] {
+        position: fixed !important;
+        top: 0.6rem !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 9999 !important;
+        background: rgba(20, 20, 35, 0.82) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        padding: 0.3rem 1.5rem !important;  /* reduced vertical padding */
+        border-radius: 50px !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+        margin: 0 !important;
+        width: auto !important;
+        white-space: nowrap !important;  /* prevent wrapping */
+    }
+    /* Force the inner radio group to stay on one row */
+    [data-testid="stRadio"] > div,
+    [data-testid="stRadio"] [role="radiogroup"] {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 0 !important;
+    }
+    
+    /* Hide the default radio circle robustly */
+    [role="radiogroup"] label > div:first-child {
+        display: none !important;
+    }
+    
+    /* Style the label container */
+    [role="radiogroup"] label {
+        padding: 0.3rem 0.8rem !important;  /* tighter vertical padding */
+        margin-bottom: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        cursor: pointer !important;
+        box-shadow: none !important;
+        white-space: nowrap !important;
+    }
+    
+    /* Base text styling for navbar items */
+    [role="radiogroup"] label div[data-testid="stMarkdownContainer"] {
+        color: #94a3b8 !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.3px;
+        transition: all 0.3s ease !important;
+        font-size: 0.92rem;  /* slightly smaller to fit all items */
+    }
+    
+    /* Hover effect: White Text Glow and slight shift */
+    [role="radiogroup"] label:hover {
+        background: transparent !important;
+        transform: translateY(-2px) !important;
+    }
+    [role="radiogroup"] label:hover div[data-testid="stMarkdownContainer"] {
+        color: #ffffff !important;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.6) !important;
+    }
+    
+    /* Active/Selected state: Intense White Text Glow */
+    [role="radiogroup"] label:has(input:checked) {
+        background: transparent !important;
+    }
+    [role="radiogroup"] label:has(input:checked) div[data-testid="stMarkdownContainer"] {
+        color: #ffffff !important;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.9), 0 0 5px rgba(255, 255, 255, 0.5) !important;
     }
     
     /* Headings */
     h1, h2, h3, h4, h5, h6 {
         color: #ffffff !important;
         font-weight: 800;
-        letter-spacing: 0.5px;
+        letter-spacing: -0.5px;
     }
     
-    /* Vibe Specific Classes */
-    .main-header {
-        font-size: 3.5rem;
+    /* Hero section styling */
+    .hero-container {
+        text-align: center;
+        margin-top: 4rem;
+        margin-bottom: 4rem;
+    }
+    .hero-title {
+        font-size: 4.5rem;
         font-weight: 800;
         color: #ffffff;
-        margin-bottom: 0.5rem;
-        text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        margin-bottom: 1rem;
+        line-height: 1.1;
+        letter-spacing: -1.5px;
     }
-    .sub-header {
-        font-size: 0.9rem;
-        color: #74B72E; /* Bright Lime Green Accent */
-        margin-bottom: 2rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        font-weight: 600;
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: #94a3b8;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.5;
     }
     
-    /* Custom Button styling - Vibrant Coral/Orange */
+    /* Custom Button styling - Indigo/Purple Accent */
     .stButton>button {
-        background-color: #ff4d4d !important;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
         color: #ffffff !important;
         border: none !important;
-        border-radius: 4px;
+        border-radius: 8px;
         font-weight: 600;
-        letter-spacing: 1px;
-        padding: 0.5rem 1.5rem;
-        box-shadow: 0 4px 6px rgba(255, 77, 77, 0.2);
+        letter-spacing: 0.5px;
+        padding: 0.6rem 2rem;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         transition: all 0.2s ease-in-out;
     }
     .stButton>button:hover {
-        background-color: #e63939 !important;
-        box-shadow: 0 6px 12px rgba(255, 77, 77, 0.4);
         transform: translateY(-2px);
-    }
-    
-    /* Testimonial Section */
-    .testimonial-box {
-        background: rgba(11, 19, 26, 0.6);
-        padding: 2.5rem;
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-left: 6px solid #74B72E; /* Lime green quote accent */
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    }
-    .quote-icon {
-        font-size: 4rem;
-        color: #74B72E;
-        line-height: 0.5;
-        font-family: serif;
-        font-weight: bold;
-    }
-    
-    /* Dataframes/Tables Fallback */
-    [data-testid="stDataFrame"] {
-        background: rgba(11, 19, 26, 0.8);
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    /* Sidebar styling */
-    [data-testid="stSidebar"] {
-        background-color: #0b131a;
-        border-right: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    
-    /* Modernize Sidebar Navigation (Radio Buttons to Glowing Text) */
-    /* Hide the default radio circle */
-    [data-testid="stSidebar"] [role="radiogroup"] label > div:first-child {
-        display: none !important;
-    }
-    /* Style the label container to be transparent */
-    [data-testid="stSidebar"] [role="radiogroup"] label {
-        padding: 0.5rem 0.5rem !important;
-        margin-bottom: 0.2rem !important;
-        background: transparent !important;
-        border: none !important;
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-        cursor: pointer !important;
-        width: 100% !important;
-        box-shadow: none !important;
-    }
-    /* Hover effect: Text Glow and slight shift */
-    [data-testid="stSidebar"] [role="radiogroup"] label:hover {
-        background: transparent !important;
-        border-color: transparent !important;
-        transform: translateX(8px) !important;
-        box-shadow: none !important;
-    }
-    [data-testid="stSidebar"] [role="radiogroup"] label:hover div[data-testid="stMarkdownContainer"] {
-        color: #ff4d4d !important;
-        text-shadow: 0 0 10px rgba(255, 77, 77, 0.6) !important;
-    }
-    /* Active/Selected state: Intense Text Glow */
-    [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) {
-        background: transparent !important;
-        border-color: transparent !important;
-        transform: translateX(8px) !important;
-        box-shadow: none !important;
-    }
-    [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) div[data-testid="stMarkdownContainer"] {
-        color: #ff4d4d !important;
-        text-shadow: 0 0 15px rgba(255, 77, 77, 0.8), 0 0 5px rgba(255, 77, 77, 0.4) !important;
-    }
-    
-    /* Base text styling for sidebar items */
-    [data-testid="stSidebar"] [role="radiogroup"] label div[data-testid="stMarkdownContainer"] {
-        width: 100%;
-        color: #94a3b8 !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease !important;
+        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
     }
     
     /* Input Fields */
     .stTextInput>div>div>input, .stDateInput>div>div>input, .stTextArea>div>div>textarea {
-        background: rgba(22, 34, 47, 0.8) !important;
+        background: rgba(255, 255, 255, 0.03) !important;
         color: #ffffff !important;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
+        border-radius: 6px;
         transition: all 0.2s ease;
     }
     .stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus {
-        border-color: #ff4d4d;
-        box-shadow: 0 0 0 1px #ff4d4d;
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 1px #8b5cf6;
     }
     
     /* Hide 'Press Enter to submit' text in forms */
@@ -178,27 +189,47 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Adjust text colors inside containers */
-    .testimonial-box p { color: #cbd5e1 !important; font-size: 1.1rem; line-height: 1.6; }
-    .testimonial-box strong { color: #ffffff !important; }
-    
-    /* Custom List Row */
+    /* Custom List Row — no backdrop-filter to prevent scroll jitter */
     .list-row-card {
-        background: rgba(22, 34, 47, 0.5);
-        padding: 1rem;
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        margin-bottom: 0.5rem;
+        background: rgba(255, 255, 255, 0.04);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        margin-bottom: 0.8rem;
+        /* backdrop-filter removed intentionally: causes GPU repaint wobble on scroll */
     }
     .list-row-title {
         color: #ffffff;
         font-weight: 600;
-        font-size: 1.1rem;
-        margin-bottom: 0.2rem;
+        font-size: 1.2rem;
+        margin-bottom: 0.4rem;
     }
     .list-row-detail {
         color: #94a3b8;
+        font-size: 0.95rem;
+    }
+    
+    /* Testimonial Section override if used */
+    .testimonial-box {
+        background: rgba(255, 255, 255, 0.02);
+        padding: 2.5rem;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-left: 4px solid #8b5cf6;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Top Bar Auth Status — now inline, no absolute positioning */
+    .top-auth-status {
         font-size: 0.9rem;
+        color: #94a3b8;
+        text-align: right;
+        padding-right: 0.5rem;
+    }
+    
+    /* Metrics */
+    [data-testid="stMetricValue"] {
+        color: #8b5cf6 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -227,6 +258,20 @@ def show_dataframe(data, title=None, exclude_sensitive=True):
         st.dataframe(df, use_container_width=True, hide_index=True)
     else:
         st.info("No data available.")
+
+@st.dialog("Select Proficiency Level")
+def add_skill_dialog(skill_id, skill_name, user_id):
+    st.write(f"What is your proficiency level in **{skill_name}**?")
+    proficiency = st.select_slider("Proficiency Level",
+        options=["Beginner", "Intermediate", "Advanced", "Expert"], value="Intermediate")
+    if st.button("Submit", use_container_width=True):
+        try:
+            result = services.add_member_skill(user_id, skill_id, proficiency)
+            st.session_state[f"skill_added_{skill_id}"] = True
+            st.success(f"✅ {result['message']}")
+            st.rerun()
+        except Exception as e:
+            st.error(f"❌ Failed to add skill: {e}")
 
 def render_interactive_list(data, title=None, action_type=None, user_id=None):
     if title:
@@ -272,12 +317,12 @@ def render_interactive_list(data, title=None, action_type=None, user_id=None):
         with col2:
             st.write("") # Vertical alignment spacing
             if action_type == 'add_skill':
-                if st.button("➕ Add", key=f"add_skill_{idx}"):
-                    try:
-                        result = services.add_member_skill(user_id, item['skill_id'], "Intermediate")
-                        st.success("Skill added!")
-                    except Exception as e:
-                        st.error(f"Error: {e}")
+                added_key = f"skill_added_{item['skill_id']}"
+                if st.session_state.get(added_key, False):
+                    st.button("✅ Skill Added", key=f"add_skill_disabled_{idx}", disabled=True)
+                else:
+                    if st.button("➕ Add", key=f"add_skill_{idx}"):
+                        add_skill_dialog(item['skill_id'], item.get(title_key, 'Skill'), user_id)
             elif action_type == 'complete_request':
                 if st.button("✓ Finish", key=f"comp_req_{idx}"):
                     st.info("Please fill out the form above to log hours for this request.")
@@ -294,80 +339,154 @@ def render_interactive_list(data, title=None, action_type=None, user_id=None):
 if 'logged_in_user' not in st.session_state:
     st.session_state['logged_in_user'] = None
 
+# Separate page-tracking state (never bound to a widget key)
+if 'current_page' not in st.session_state:
+    st.session_state['current_page'] = 'Home'
+
 def logout():
     st.session_state['logged_in_user'] = None
+    st.session_state['current_page'] = 'Home'
     st.rerun()
 
-# ============================================================
-# SIDEBAR NAVIGATION
-# ============================================================
-st.sidebar.title("⏰ TimeBank")
-st.sidebar.markdown("---")
+def navigate(target):
+    """Safe navigation callback — called BEFORE next render."""
+    st.session_state['current_page'] = target
 
+# ============================================================
+# TOP NAVIGATION
+# ============================================================
 user = st.session_state['logged_in_user']
 
 if user is None:
-    page = st.sidebar.radio("Navigate", ["Login", "Sign Up"])
+    nav_options = ["Home", "Login", "Sign Up"]
 else:
-    st.sidebar.write(f"Welcome, **{user['first_name']}**!")
-    st.sidebar.write(f"Role: `{user['role']}`")
-    st.sidebar.write(f"Credits: **{user['credit_balance']}**")
-    st.sidebar.button("Logout", on_click=logout)
-    st.sidebar.markdown("---")
-    
     nav_options = [
-        "🏠 Home", 
-        "🛠️ Add Skill",
-        "📋 Request Service", 
-        "✅ Complete Transaction",
-        "💰 View Credits", 
-        "⭐ Give Feedback"
+        "Home", 
+        "Add Skill",
+        "Request Service", 
+        "Complete Transaction",
+        "View Credits", 
+        "Give Feedback"
     ]
-    
     if user['role'] == 'admin':
-        nav_options.append("🛡️ Admin Dashboard")
-        nav_options.append("📊 Analytics")
-        
-    page = st.sidebar.radio("Navigate", nav_options)
+        nav_options.append("Admin Dashboard")
+        nav_options.append("Analytics")
 
-st.sidebar.markdown("---")
-st.sidebar.info("**1 Hour = 1 Credit**\nExchange skills, not money!")
+# Ensure current_page is valid for current nav_options
+if st.session_state['current_page'] not in nav_options:
+    st.session_state['current_page'] = nav_options[0]
 
+current_idx = nav_options.index(st.session_state['current_page'])
+
+# Radio widget has NO key — index drives the selection, result syncs back
+page = st.radio(
+    "Navigation", nav_options,
+    index=current_idx,
+    horizontal=True,
+    label_visibility="collapsed"
+)
+# Sync radio result back into our state variable
+st.session_state['current_page'] = page
+
+# Display user info + logout in a clean row below the fixed navbar
+if user is not None:
+    auth_col1, auth_col2 = st.columns([8, 1])
+    with auth_col1:
+        st.markdown(
+            f"<div class='top-auth-status'>👤 <b>{user['first_name']}</b> &nbsp;|&nbsp; ⏱ Credits: <b>{user['credit_balance']}</b></div>",
+            unsafe_allow_html=True
+        )
+    with auth_col2:
+        st.button("Logout", on_click=logout, use_container_width=True)
+
+st.write("")  # Some spacing
+
+# ============================================================
+# PAGE: HOME
+# ============================================================
+if page == "Home":
+    st.markdown("""
+    <div class="hero-container">
+        <div style="color: #94a3b8; font-weight: 600; letter-spacing: 1px; margin-bottom: 1rem; text-transform: uppercase; font-size: 0.9rem;">
+            ▵ TimeBank Community
+        </div>
+        <div class="hero-title">Radically better<br>skill exchange platform</div>
+        <div class="hero-subtitle">Trade your time, not your money. Empower your local community by offering what you know and receiving what you need.</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.write("")
+    st.write("")
+
+    if user is None:
+        st.write("")
+        c1, c2, c3, c4, c5 = st.columns([2, 1, 0.2, 1, 2])
+        with c2:
+            st.button("🔑  Login", use_container_width=True,
+                      on_click=navigate, args=("Login",))
+        with c4:
+            st.button("✨  Sign Up", use_container_width=True,
+                      on_click=navigate, args=("Sign Up",))
+    else:
+        st.markdown('<h3 style="text-align: center; margin-bottom: 2rem;">Quick Actions</h3>', unsafe_allow_html=True)
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.markdown("""
+            <div class="list-row-card" style="text-align: center;">
+                <h3 style="color: #8b5cf6; margin-bottom: 0.5rem;">Earn Credits</h3>
+                <p style="color: #94a3b8;">Add your skills to your profile and start fulfilling requests.</p>
+            </div>
+            """, unsafe_allow_html=True)
+        with col2:
+            st.markdown("""
+            <div class="list-row-card" style="text-align: center;">
+                <h3 style="color: #8b5cf6; margin-bottom: 0.5rem;">Request Help</h3>
+                <p style="color: #94a3b8;">Need a hand? Spend your credits by requesting a service.</p>
+            </div>
+            """, unsafe_allow_html=True)
+        with col3:
+            st.markdown("""
+            <div class="list-row-card" style="text-align: center;">
+                <h3 style="color: #8b5cf6; margin-bottom: 0.5rem;">Build Trust</h3>
+                <p style="color: #94a3b8;">Complete transactions and give feedback to grow your reputation.</p>
+            </div>
+            """, unsafe_allow_html=True)
 
 # ============================================================
 # PAGE: LOGIN
 # ============================================================
-if page == "Login":
-    st.markdown('<div class="main-header">Welcome Back</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">Login to your account</div>', unsafe_allow_html=True)
-    
-    with st.form("login_form"):
-        email = st.text_input("Email Address")
-        password = st.text_input("Password", type="password")
-        submit = st.form_submit_button("Login")
-        
-        if submit:
-            if email and password:
-                member = queries.get_member_by_email(email)
-                if member:
-                    hashed_input = hashlib.sha256(password.encode('utf-8')).hexdigest()
-                    if member.get('password_hash') == hashed_input:
-                        st.session_state['logged_in_user'] = member
-                        st.success("Login successful!")
-                        st.rerun()
+elif page == "Login":
+    st.markdown('<div class="hero-container"><div class="hero-title">Welcome Back</div><div class="hero-subtitle">Login to your TimeBank account</div></div>', unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        with st.form("login_form"):
+            email = st.text_input("Email Address")
+            password = st.text_input("Password", type="password")
+            submit = st.form_submit_button("Login", use_container_width=True)
+
+            if submit:
+                if email and password:
+                    member = queries.get_member_by_email(email)
+                    if member:
+                        hashed_input = hashlib.sha256(password.encode('utf-8')).hexdigest()
+                        if member.get('password_hash') == hashed_input:
+                            st.session_state['logged_in_user'] = member
+                            st.session_state['current_page'] = 'Home'
+                            st.success("Login successful!")
+                            st.rerun()
+                        else:
+                            st.error("Invalid password.")
                     else:
-                        st.error("Invalid password.")
+                        st.error("User not found. Please sign up.")
                 else:
-                    st.error("User not found. Please sign up.")
-            else:
-                st.error("Please enter email and password.")
+                    st.error("Please enter email and password.")
 
 # ============================================================
 # PAGE: SIGN UP
 # ============================================================
 elif page == "Sign Up":
-    st.markdown('<div class="main-header">Join TimeBank</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">Register a new account</div>', unsafe_allow_html=True)
+    st.markdown('<div class="hero-container"><div class="hero-title">Join TimeBank</div><div class="hero-subtitle">Register a new account to start exchanging skills</div></div>', unsafe_allow_html=True)
 
     with st.form("register_form", clear_on_submit=True):
         col1, col2 = st.columns(2)
@@ -382,7 +501,7 @@ elif page == "Sign Up":
             confirm_password = st.text_input("Confirm Password *", type="password")
             address = st.text_input("Address")
             city = st.text_input("City", max_chars=50)
-            state = st.text_input("State", max_chars=50)
+            state_val = st.text_input("State", max_chars=50)
 
         zip_code = st.text_input("ZIP Code", max_chars=10)
         submitted = st.form_submit_button("Register Member", use_container_width=True)
@@ -397,7 +516,7 @@ elif page == "Sign Up":
                     result = services.register_member(
                         first_name, last_name, email, password, phone or None,
                         str(dob) if dob else None, address or None,
-                        city or None, state or None, zip_code or None
+                        city or None, state_val or None, zip_code or None
                     )
                     st.success(f"✅ {result['message']}")
                     st.info("You can now go to Login.")
@@ -405,87 +524,27 @@ elif page == "Sign Up":
                     st.error(f"❌ Registration failed: {e}")
 
 # ============================================================
-# PAGE: HOME (AUTHENTICATED)
-# ============================================================
-elif page == "🏠 Home":
-    st.markdown('<div class="sub-header">TESTIMONIALS</div>', unsafe_allow_html=True)
-    st.markdown('<div class="main-header">Thousands of Happy Skill Exchangers</div>', unsafe_allow_html=True)
-    
-    st.write("")
-    st.write("")
-    
-    col1, col2 = st.columns([1, 1.5])
-    
-    with col1:
-        # Placeholder for an image in the layout
-        st.image("https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80", 
-                 caption="Community Exchange", use_container_width=True)
-                 
-    with col2:
-        st.markdown("""
-        <div class="testimonial-box">
-            <span class="quote-icon">"</span>
-            <p>
-            "Outstanding store for fishing accessories! Top-notch products, user-friendly 
-            website, and excellent customer service. They truly care about anglers and provide 
-            valuable tips. Highly recommended!"
-            </p>
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <img src="https://i.pravatar.cc/150?img=11" style="border-radius: 50%; width: 50px; height: 50px;">
-                <div>
-                    <strong>Jenny Wilson</strong><br>
-                    <span style="color: #94a3b8; font-size: 0.9rem;">Fish Hunter</span>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-    st.markdown("---")
-    
-    # Newsletter / Subscribe section mimic
-    st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">TESTIMONIALS</div>', unsafe_allow_html=True)
-    st.markdown('<h2 style="margin-bottom: 1rem;">Subscribe for Newsletter</h2>', unsafe_allow_html=True)
-    st.markdown('<p style="color: #94a3b8; max-width: 600px; margin: 0 auto 2rem auto;">With designs that spark conversations and evoke the spirit of adventure, Gill Rush empowers you to wear your passion on your sleeve...back on your chest.</p>', unsafe_allow_html=True)
-    
-    col_a, col_b, col_c = st.columns([1, 2, 1])
-    with col_b:
-        sub_col1, sub_col2 = st.columns([2, 1])
-        with sub_col1:
-            st.text_input("", placeholder="Email Address", label_visibility="collapsed")
-        with sub_col2:
-            st.button("Subscribe Now", use_container_width=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-# ============================================================
 # PAGE: ADD SKILL
 # ============================================================
-elif page == "🛠️ Add Skill":
-    st.header("🛠️ Add Skill to Profile")
+elif page == "Add Skill":
+    st.header("Add Skill to Profile")
     try:
-        skills = queries.get_all_skills()
+        user_skills = queries.get_member_skills(user['member_id']) or []
+        if user_skills:
+            render_interactive_list(user_skills, title="Your Added Skills", action_type=None)
+            st.markdown("---")
+
+        skills = queries.get_all_skills() or []
         if not skills:
             st.warning("Please ensure skills exist in the database.")
         else:
-            with st.form("add_skill_form", clear_on_submit=True):
-                skill_options = {f"{s['skill_name']} [{s['category']}]": s['skill_id'] for s in skills}
-                selected_skill = st.selectbox("Select Skill", list(skill_options.keys()))
-                proficiency = st.select_slider("Proficiency Level",
-                    options=["Beginner", "Intermediate", "Advanced", "Expert"], value="Intermediate")
-                submitted = st.form_submit_button("Add Skill", use_container_width=True)
+            # Pre-mark skills the user already has
+            for us in user_skills:
+                for s in skills:
+                    if s['skill_name'] == us['skill_name']:
+                        st.session_state[f"skill_added_{s['skill_id']}"] = True
 
-                if submitted:
-                    try:
-                        result = services.add_member_skill(
-                            user['member_id'], skill_options[selected_skill], proficiency
-                        )
-                        st.success(f"✅ {result['message']}")
-                    except Exception as e:
-                        st.error(f"❌ Failed to add skill: {e}")
-
-        st.markdown("---")
-        render_interactive_list(skills, title="Available Skills", action_type='add_skill', user_id=user['member_id'])
+            render_interactive_list(skills, title="Available Skills", action_type='add_skill', user_id=user['member_id'])
     except Exception as e:
         st.error(f"Error: {e}")
 
@@ -493,8 +552,8 @@ elif page == "🛠️ Add Skill":
 # ============================================================
 # PAGE: REQUEST SERVICE
 # ============================================================
-elif page == "📋 Request Service":
-    st.header("📋 Request a Service")
+elif page == "Request Service":
+    st.header("Request a Service")
     try:
         skills = queries.get_all_skills()
         if not skills:
@@ -531,8 +590,8 @@ elif page == "📋 Request Service":
 # ============================================================
 # PAGE: COMPLETE TRANSACTION
 # ============================================================
-elif page == "✅ Complete Transaction":
-    st.header("✅ Complete a Service Transaction")
+elif page == "Complete Transaction":
+    st.header("Complete a Service Transaction")
     try:
         open_requests = queries.get_open_requests()
         if not open_requests:
@@ -567,8 +626,8 @@ elif page == "✅ Complete Transaction":
 # ============================================================
 # PAGE: VIEW CREDITS
 # ============================================================
-elif page == "💰 View Credits":
-    st.header("💰 My Credits")
+elif page == "View Credits":
+    st.header("My Credits")
     try:
         balance = queries.get_credit_balance(user['member_id'])
         st.metric("Current Balance", f"{balance} credits")
@@ -581,8 +640,8 @@ elif page == "💰 View Credits":
 # ============================================================
 # PAGE: GIVE FEEDBACK
 # ============================================================
-elif page == "⭐ Give Feedback":
-    st.header("⭐ Submit Feedback")
+elif page == "Give Feedback":
+    st.header("Submit Feedback")
     try:
         transactions = queries.get_all_transactions()
         if not transactions:
@@ -620,8 +679,8 @@ elif page == "⭐ Give Feedback":
 # ============================================================
 # PAGE: ADMIN DASHBOARD (Protected)
 # ============================================================
-elif page == "🛡️ Admin Dashboard":
-    st.header("🛡️ Admin Dashboard")
+elif page == "Admin Dashboard":
+    st.header("Admin Dashboard")
     st.markdown("Overview of all users and system database state.")
     
     st.subheader("Registered Members")
@@ -640,10 +699,10 @@ elif page == "🛡️ Admin Dashboard":
 
 
 # ============================================================
-# PAGE: ANALYTICS (Admin Only logic applied in sidebar)
+# PAGE: ANALYTICS (Admin Only logic applied in navbar)
 # ============================================================
-elif page == "📊 Analytics":
-    st.header("📊 Analytics Dashboard")
+elif page == "Analytics":
+    st.header("Analytics Dashboard")
     try:
         tab1, tab2, tab3 = st.tabs(["🏆 Top Members", "🔥 Popular Skills", "📅 Trends"])
         with tab1:
